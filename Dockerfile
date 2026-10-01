@@ -25,6 +25,11 @@ COPY . .
 ENV NODE_ENV=production
 RUN bun run build
 
+FROM base AS release
+WORKDIR /usr/app
+
+RUN apt-get update && apt-get install -y curl
+
 COPY --chown=bun:bun --from=prerelease /usr/app/server ./server
 COPY --chown=bun:bun --from=prerelease /usr/app/live_data ./live_data
 
