@@ -51,13 +51,13 @@ jobs:
             APP_DIR="$HOME/apps/cf23-api"
             echo "Setting up directories and files..."
 
-            if [-d "$APP_DIR/.git"]; then
+            if [ -d "$APP_DIR/.git" ]; then
               echo "Repo exists, pull latest change..."
               cd "$APP_DIR" && git pull origin master
             else
               echo "First run, clone repo..."
-              mkdir -p "$APP_DIR" && cd "$APP_DIR"
-              git clone "https://github.com/RafadanaM/cf23-api.git"
+              git clone "https://github.com/RafadanaM/cf23-api.git" "$APP_DIR"
+              cd "$APP_DIR"
             fi
 
             echo "Running deploy script..."
