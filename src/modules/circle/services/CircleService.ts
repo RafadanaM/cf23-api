@@ -57,14 +57,15 @@ function createCircleService(
       logger.info(
         '[CIRCLE_SERVICE] Existing and scraped circle is different, Syncing circles...'
       );
-      await circleRepository.syncCircles(scrapedCircles);
+
       version = `"${hashCircleData(scrapedCircles).toString(16)}"`;
       logger.info('[CIRCLE_SERVICE] Syncing circles complete');
 
       if (appConfig.environment === 'production') {
-        logger.info('[CIRCLE_SERVICE] Purging cache..');
+        const url = `${appConfig.origin}/api/v1/circles`;
+        logger.info(`[CIRCLE_SERVICE] Purging cache: ${url}`);
         try {
-          const res = await cacheClient.purgeUrls([`${appConfig.origin}/api/circles`]);
+          const res = await cacheClient.purgeUrls([url]);
           logger.info(`[CIRCLE_SERVICE] Purging cache complete, id: ${res?.id}`);
         } catch (e) {
           logger.error(
