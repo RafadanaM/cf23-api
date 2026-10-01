@@ -61,6 +61,7 @@ jobs:
             fi
 
             echo "Running deploy script..."
+            chmod +x ./scripts/deploy.sh
             ./scripts/deploy.sh
 
             echo "Deploy script complete."
