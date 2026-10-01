@@ -1,0 +1,21 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - COMMIT_HASH=local-mirror-build
+    container_name: bun-mirror
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+    ports:
+      - '5000:5000'
+    volumes:
+      - db_data:/usr/app/db_data
+      - live_data:/usr/app/live_data
+volumes:
+  db_data:
+  live_data:
