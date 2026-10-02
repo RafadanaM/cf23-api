@@ -1,5 +1,5 @@
 import { getAppConfig } from '@config/appConfig';
-import logger from '@core/logger/logger';
+import globalLogger from '@core/logger/logger';
 
 import type { CacheClient } from '../../../infrastructure/cloudflare/cloudflareClient';
 import type { CircleRepository } from '../repositories/CircleRepository';
@@ -16,6 +16,10 @@ function createCircleService(
   cacheClient: CacheClient
 ): CircleService {
   let version: string = '';
+
+  const logger = globalLogger.child({
+    scope: 'CircleService'
+  });
 
   const appConfig = getAppConfig();
 
@@ -34,9 +38,9 @@ function createCircleService(
 
   async function updateCircles() {
     try {
-      logger.info('[CIRCLE_SERVICE] Scrapping circles...');
+      logger.info('Scrapping circles...');
       const scrapedCircles = await circleRepository.scrapeCircles();
-      logger.info('[CIRCLE_SERVICE] Scrapping circles complete');
+      logger.info('Scrapping circles complete');
 
       const existingCircles: NormalizedCircles = await circleRepository
         .getCircles()
@@ -50,32 +54,28 @@ function createCircleService(
       const existingCirclesHash = hashCircleData(existingCircles);
 
       if (scrapedCirclesHash === existingCirclesHash) {
-        logger.info('[CIRCLE_SERVICE] Existing and scraped circle is the same, noop');
+        logger.info('Existing and scraped circle is the same, noop');
         return;
       }
 
-      logger.info(
-        '[CIRCLE_SERVICE] Existing and scraped circle is different, Syncing circles...'
-      );
+      logger.info('Existing and scraped circle is different, Syncing circles...');
 
       version = `"${hashCircleData(scrapedCircles).toString(16)}"`;
-      logger.info('[CIRCLE_SERVICE] Syncing circles complete');
+      logger.info('Syncing circles complete');
 
       if (appConfig.environment === 'production') {
         const url = `${appConfig.origin}/api/v1/circles`;
-        logger.info(`[CIRCLE_SERVICE] Purging cache: ${url}`);
+        logger.info(`Purging cache: ${url}`);
         try {
           const res = await cacheClient.purgeUrls([url]);
-          logger.info(`[CIRCLE_SERVICE] Purging cache complete, id: ${res?.id}`);
+          logger.info(`Purging cache complete, id: ${res?.id}`);
         } catch (e) {
-          logger.error(
-            `[CIRCLE_SERVICE] Purging cache failed: ${Error.isError(e) ? e : ''}`
-          );
+          logger.error(`Purging cache failed: ${Error.isError(e) ? e : ''}`);
         }
       }
     } catch (e) {
       const message = Error.isError(e) ? e.message : 'Failed to scrape circles';
-      logger.error(`[CIRCLE_SERVICE] ${message}`);
+      logger.error(`${message}`);
     }
   }
 

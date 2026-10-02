@@ -1,81 +1,77 @@
 import { Elysia } from 'elysia';
 
-import globalLogger from './logger';
+import logger, { asyncLocalStorage } from './logger';
 
 const loggerPlugin = new Elysia({ name: 'logger-plugin' })
-  .derive({ as: 'global' }, () => {
+  .wrap((fn) => (...args: unknown[]) => {
     const requestId = crypto.randomUUID();
+
+    return asyncLocalStorage.run({ requestId }, () => fn(...args));
+  })
+  .derive({ as: 'global' }, () => {
     return {
-      startTime: performance.now(),
-      requestId,
-      logger: globalLogger.child({ requestId })
+      startTime: performance.now()
     };
   })
   .onRequest(({ request }) => {
     request.startTime = performance.now();
   })
-  .onAfterResponse(
-    { as: 'global' },
-    ({ logger: localLogger, request, set, path, startTime }) => {
-      if (set.status && typeof set.status === 'number' && set.status >= 400) {
-        return;
-      }
-
-      const logger = localLogger ?? globalLogger;
-      logger.info({
-        method: request.method,
-        path,
-        status: set.status,
-        duration: performance.now() - (startTime || 0)
-      });
+  .onAfterHandle({ as: 'global' }, ({ set }) => {
+    set.headers['x-request-id'] = asyncLocalStorage.getStore()?.requestId ?? '';
+  })
+  .onAfterResponse({ as: 'global' }, ({ request, set, path, startTime }) => {
+    if (set.status && typeof set.status === 'number' && set.status >= 400) {
+      return;
     }
-  )
-  .onError(
-    { as: 'global' },
-    ({ code, set, error, logger: localLogger, request, path, startTime }) => {
-      const logger = localLogger ?? globalLogger;
 
-      const errorCtx = {
-        code,
-        path,
-        method: request.method,
-        status: set.status,
-        duration: performance.now() - (startTime || 0)
-      };
+    logger.info({
+      method: request.method,
+      path,
+      status: set.status,
+      duration: performance.now() - (startTime || 0)
+    });
+  })
+  .onError({ as: 'global' }, ({ code, set, error, request, path, startTime }) => {
+    const errorCtx = {
+      code,
+      path,
+      method: request.method,
+      status: set.status,
+      duration: performance.now() - (startTime || 0)
+    };
 
-      switch (code) {
-        case 'NOT_FOUND':
-          logger.warn(errorCtx);
-          break;
-        case 'VALIDATION':
-          logger.warn({
-            ...errorCtx,
-            errors: error.all
-          });
-          break;
+    switch (code) {
+      case 'NOT_FOUND':
+        logger.warn(errorCtx);
+        break;
+      case 'VALIDATION':
+        logger.warn({
+          ...errorCtx,
+          errors: error.all
+        });
+        break;
 
-        case 'INVALID_FILE_TYPE':
-        case 'INVALID_COOKIE_SIGNATURE':
-        case 'PARSE':
-          logger.warn({
+      case 'INVALID_FILE_TYPE':
+      case 'INVALID_COOKIE_SIGNATURE':
+      case 'PARSE':
+        logger.warn({
+          ...errorCtx,
+          err: error
+        });
+        break;
+
+      case 'UNKNOWN':
+      case 'INTERNAL_SERVER_ERROR':
+      default:
+        {
+          logger.error({
             ...errorCtx,
             err: error
           });
-          break;
+        }
 
-        case 'UNKNOWN':
-        case 'INTERNAL_SERVER_ERROR':
-        default:
-          {
-            logger.error({
-              ...errorCtx,
-              err: error
-            });
-          }
-
-          break;
-      }
+        break;
     }
-  );
+  });
 
 export default loggerPlugin;

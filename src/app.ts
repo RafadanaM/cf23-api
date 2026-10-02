@@ -15,7 +15,7 @@ import createCirclePlugin from '@modules/circle/plugins/CirclePlugin';
 import createCircleRepository from '@modules/circle/repositories/CircleRepository';
 import createCircleService from '@modules/circle/services/CircleService';
 
-import logger from '@core/logger/logger';
+import logger, { asyncLocalStorage } from '@core/logger/logger';
 import createCloudflareClient from './infrastructure/cloudflare/cloudflareClient';
 import createAppPlugin from './plugins/appPlugin';
 
@@ -44,12 +44,19 @@ function createApp({ appConfig, db }: CreateAppArgs) {
   const bookmarkController = createBookmarkController(appPlugin, bookmarkPlugin);
 
   logger.info('Updating circle data...');
-  void circleService.updateCircles();
+
+  function runRefresh(name: string) {
+    asyncLocalStorage.run({ jobId: `${name}-${crypto.randomUUID()}` }, () => {
+      void circleService.updateCircles();
+    });
+  }
+
+  runRefresh('initial-catalog-refresh');
 
   // scrape every 6 hours
   Bun.cron('0 */6 * * *', async () => {
-    logger.info('[CRON] Running scheduled circle update...');
-    void circleService.updateCircles();
+    logger.info('Running scheduled circle update...');
+    runRefresh('scheduled-catalog-refresh');
   });
 
   const v1Routes = new Elysia({ prefix: '/v1' })

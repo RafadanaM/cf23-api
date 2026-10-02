@@ -1,4 +1,4 @@
-import logger from '@core/logger/logger';
+import globalLogger from '@core/logger/logger';
 import type { NormalizedCircles } from '../types/Circle';
 import parseRawCircles from '../utils/parseRawCircles';
 
@@ -13,6 +13,10 @@ const FILE_PATH = './live_data/normalized_circles.json';
 
 function createCircleRepository(): CircleRepository {
   let cachedCircleData: NormalizedCircles | undefined = undefined;
+
+  const logger = globalLogger.child({
+    scope: 'CircleRepository'
+  });
 
   async function getCircles() {
     // TBH I don't think caching the file is necessary because cloudflare already caches the result.
@@ -36,7 +40,7 @@ function createCircleRepository(): CircleRepository {
     //   return parseRawCircles(text);
     // }
 
-    logger.info('[CIRCLE_REPOSITORY] Fetching Web Catalog...');
+    logger.info('Fetching Web Catalog...');
 
     const response = await fetch(CATALOG_API, {
       method: 'GET'
@@ -48,7 +52,7 @@ function createCircleRepository(): CircleRepository {
       );
     }
 
-    logger.info('[CIRCLE_REPOSITORY] Fetching Web Catalog Complete');
+    logger.info('Fetching Web Catalog Complete');
     const rawHTML = await response.text();
     // await Bun.write('./db_data/temp_html.txt', rawHTML);
 
