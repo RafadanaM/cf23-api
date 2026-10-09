@@ -13,7 +13,14 @@ export function createAppConfig(env: AppEnvSchema): AppConfig {
     commitHash: env.COMMIT_HASH,
     origin: env.ORIGIN,
     cfAPIKey: env.CLOUDFLARE_API_TOKEN,
-    cfZoneId: env.CLOUDFLARE_ZONE_ID
+    cfZoneId: env.CLOUDFLARE_ZONE_ID,
+    s3AccessKeyId: env.APP_S3_ACCESS_KEY_ID,
+    s3SecretAccessKey: env.APP_S3_SECRET_ACCESS_KEY,
+    s3APIEndpoint: env.S3_API_ENDPOINT,
+    s3BucketName: env.S3_BUCKET_NAME,
+    imgProxyBaseUrl: env.IMGPROXY_BASE_URL,
+    imgProxyKey: env.IMGPROXY_KEY,
+    imgProxySalt: env.IMGPROXY_SALT
   };
 
   return appConfigInstance;

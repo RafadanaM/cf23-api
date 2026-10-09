@@ -16,6 +16,7 @@ function bootstrap() {
   const appEnv = appEnvResult.data;
 
   const appConfig = createAppConfig(appEnv);
+
   const db = initDB();
 
   return { appConfig, db };

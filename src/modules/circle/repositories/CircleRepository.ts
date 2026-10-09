@@ -1,4 +1,5 @@
 import globalLogger from '@core/logger/logger';
+
 import type { NormalizedCircles } from '../types/Circle';
 import parseRawCircles from '../utils/parseRawCircles';
 
@@ -26,20 +27,12 @@ function createCircleRepository(): CircleRepository {
 
     const file = Bun.file(FILE_PATH);
     const data = (await file.json()) as NormalizedCircles;
-    data.fillerCircles = [];
     cachedCircleData = data;
 
     return data;
   }
 
   async function scrapeCircles(): Promise<NormalizedCircles> {
-    // const file = Bun.file('./db_data/temp_html.txt');
-    //
-    // if (await file.exists()) {
-    //   const text = await file.text();
-    //   return parseRawCircles(text);
-    // }
-
     logger.info('Fetching Web Catalog...');
 
     const response = await fetch(CATALOG_API, {
@@ -54,18 +47,11 @@ function createCircleRepository(): CircleRepository {
 
     logger.info('Fetching Web Catalog Complete');
     const rawHTML = await response.text();
-    // await Bun.write('./db_data/temp_html.txt', rawHTML);
 
     return parseRawCircles(rawHTML);
   }
 
   async function syncCircles(normalizedCircles: NormalizedCircles) {
-    if (!cachedCircleData) {
-      cachedCircleData = normalizedCircles;
-      await Bun.write(FILE_PATH, JSON.stringify(normalizedCircles));
-      return;
-    }
-
     cachedCircleData = normalizedCircles;
     await Bun.write(FILE_PATH, JSON.stringify(normalizedCircles));
   }

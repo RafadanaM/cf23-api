@@ -4,6 +4,7 @@ import { Elysia } from 'elysia';
 import type { AppConfig } from '@config/types';
 import type { initDB } from '@db/db';
 import errorHandler from '@core/errors/errorHandler';
+import logger, { asyncLocalStorage } from '@core/logger/logger';
 import loggerPlugin from '@core/logger/loggerPlugin';
 
 import createBookmarkController from '@modules/bookmarks/controllers/BookmarkController';
@@ -14,8 +15,10 @@ import createCircleController from '@modules/circle/controllers/CircleController
 import createCirclePlugin from '@modules/circle/plugins/CirclePlugin';
 import createCircleRepository from '@modules/circle/repositories/CircleRepository';
 import createCircleService from '@modules/circle/services/CircleService';
+import createImageRepository from '@modules/images/ImageRepository';
 
-import logger, { asyncLocalStorage } from '@core/logger/logger';
+import createImageCacheRepository from '@modules/images/ImageCacheRepository';
+import createImageService from '@modules/images/ImageService';
 import createCloudflareClient from './infrastructure/cloudflare/cloudflareClient';
 import createAppPlugin from './plugins/appPlugin';
 
@@ -33,8 +36,28 @@ function createApp({ appConfig, db }: CreateAppArgs) {
   const bookmarkRepository = createBookmarkRepository(db);
   const bookmarkService = createBookmarkService(bookmarkRepository);
 
+  const imageRepository = createImageRepository({
+    accessKeyId: appConfig.s3AccessKeyId,
+    secretAccessKey: appConfig.s3SecretAccessKey,
+    bucket: appConfig.s3BucketName,
+    apiEndpoint: appConfig.s3APIEndpoint
+  });
+
+  const imageCacheRepository = createImageCacheRepository(db);
+
+  const imageService = createImageService(imageRepository, imageCacheRepository, {
+    baseUrl: appConfig.imgProxyBaseUrl,
+    key: appConfig.imgProxyKey,
+    salt: appConfig.imgProxySalt,
+    bucketName: appConfig.s3BucketName
+  });
+
   const circleRepository = createCircleRepository();
-  const circleService = createCircleService(circleRepository, cloudflareClient);
+  const circleService = createCircleService(
+    circleRepository,
+    cloudflareClient,
+    imageService
+  );
 
   const appPlugin = createAppPlugin(appConfig);
   const circlePlugin = createCirclePlugin(circleService);

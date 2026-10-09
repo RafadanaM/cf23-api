@@ -2,7 +2,6 @@ import { DOMParser, HTMLScriptElement } from 'linkedom';
 
 import { ParsingError } from '@core/errors/errors';
 
-import logger from '@core/logger/logger';
 import type {
   AttendingDay,
   BoothRect,
@@ -107,7 +106,6 @@ export default parseRawCircles;
 function parseAllCircle(allCircles: RawCircle[]): NormalizedCircles {
   const normalizedCirles: Circle[] = [];
   const allFandoms = new Set<string>();
-  const start = performance.now();
 
   allCircles.forEach((rawCircle) => {
     const code = normalizeCircleCode(rawCircle.circle_code);
@@ -120,6 +118,7 @@ function parseAllCircle(allCircles: RawCircle[]): NormalizedCircles {
       name: rawCircle.name.trim(),
       imageUrl: rawCircle.circle_cut,
       sampleWorks: rawCircle.sampleworks_images ?? [],
+      sampleWorkThumbnails: rawCircle.sampleworks_images ?? [],
       rating: rawCircle.rating,
       circleType,
       attendingDays: normalizeDay(rawCircle.day),
@@ -134,14 +133,11 @@ function parseAllCircle(allCircles: RawCircle[]): NormalizedCircles {
       allFandoms.add(fandom);
     });
   });
-  const end = performance.now();
-
-  logger.info(`time taken: ${end - start}`);
 
   return {
     circles: normalizedCirles,
     fillerCircles: [],
-    fandoms: Array.from(allFandoms)
+    fandoms: []
   };
 }
 
@@ -654,7 +650,7 @@ function normalizeSocialMedia(rawCircle: RawCircle): SocialMediaDetail[] {
 }
 
 function normalizeFandoms(fandoms: string, otherFandoms: string): string[] {
-  const normalizedOtherFandoms = otherFandoms === '-' ? '' : otherFandoms;
+  const normalizedOtherFandoms = otherFandoms.trim() === '-' ? '' : otherFandoms;
   const allFandoms = fandoms
     .split(FANDOM_SPLIT_PATTERN)
     .concat(normalizedOtherFandoms.split(FANDOM_SPLIT_PATTERN))

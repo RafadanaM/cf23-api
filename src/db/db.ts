@@ -14,6 +14,8 @@ export function initDB() {
 
   dbInstance.run('CREATE TABLE IF NOT EXISTS bookmarks (id TEXT PRIMARY KEY, data TEXT)');
 
+  dbInstance.run('CREATE TABLE IF NOT EXISTS uploaded_images (key TEXT PRIMARY KEY)');
+
   return dbInstance;
 }
 

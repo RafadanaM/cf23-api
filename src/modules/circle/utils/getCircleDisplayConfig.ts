@@ -4,222 +4,276 @@ const displayConfig = new Map<string, CircleDisplayConfig>([
   [
     'A',
     {
-      backgroundColor: '#fff0f0',
-      borderColor: '#ffb3b3',
-      backgroundColorHover: '#ffe0e0'
+      backgroundColor: '#fee2e2',
+      borderColor: '#fca5a5',
+      backgroundColorHover: '#fecaca'
     }
-  ], // Soft Red
+  ],
   [
     'B',
     {
-      backgroundColor: '#fff5eb',
-      borderColor: '#ffd1a4',
-      backgroundColorHover: '#ffebd6'
+      backgroundColor: '#ffedd5',
+      borderColor: '#fdba74',
+      backgroundColorHover: '#fed7aa'
     }
-  ], // Soft Orange
+  ],
   [
     'C',
     {
-      backgroundColor: '#fffbeb',
-      borderColor: '#ffe6a4',
-      backgroundColorHover: '#fff5d6'
+      backgroundColor: '#fef3c7',
+      borderColor: '#fcd34d',
+      backgroundColorHover: '#fde68a'
     }
-  ], // Soft Yellow-Orange
+  ],
   [
     'D',
     {
-      backgroundColor: '#fffdeb',
-      borderColor: '#fff3a4',
-      backgroundColorHover: '#fffbe0'
+      backgroundColor: '#fef9c3',
+      borderColor: '#fde047',
+      backgroundColorHover: '#fef08a'
     }
-  ], // Soft Yellow
+  ],
   [
     'E',
     {
-      backgroundColor: '#faffeb',
-      borderColor: '#f0ffa4',
-      backgroundColorHover: '#f5ffd6'
+      backgroundColor: '#ecfccb',
+      borderColor: '#bef264',
+      backgroundColorHover: '#d9f99d'
     }
-  ], // Soft Lime-Yellow
+  ],
   [
     'F',
     {
-      backgroundColor: '#f5fbeb',
-      borderColor: '#ddffa4',
-      backgroundColorHover: '#ebffd6'
+      backgroundColor: '#dcfce7',
+      borderColor: '#86efac',
+      backgroundColorHover: '#bbf7d0'
     }
-  ], // Crisp Lime
+  ],
   [
     'G',
     {
-      backgroundColor: '#ebfbe3',
-      borderColor: '#c1fca3',
-      backgroundColorHover: '#defcd1'
+      backgroundColor: '#d1fae5',
+      borderColor: '#6ee7b7',
+      backgroundColorHover: '#a7f3d0'
     }
-  ], // Light Lime Green
+  ],
   [
     'H',
     {
-      backgroundColor: '#e3fbe3',
-      borderColor: '#a3fca3',
-      backgroundColorHover: '#d1fcd1'
+      backgroundColor: '#ccfbf1',
+      borderColor: '#5eead4',
+      backgroundColorHover: '#99f6e4'
     }
-  ], // Soft Mint Green
+  ],
   [
     'I',
     {
-      backgroundColor: '#e3fbeb',
-      borderColor: '#a3fcd1',
-      backgroundColorHover: '#d1fced'
+      backgroundColor: '#e0f2fe',
+      borderColor: '#7dd3fc',
+      backgroundColorHover: '#bae6fd'
     }
-  ], // Mint Cyan
+  ],
   [
     'J',
     {
-      backgroundColor: '#e3fbf5',
-      borderColor: '#a3fceb',
-      backgroundColorHover: '#d1fcf7'
+      backgroundColor: '#e0e7ff',
+      borderColor: '#a5b4fc',
+      backgroundColorHover: '#c7d2fe'
     }
-  ], // Soft Cyan
+  ],
   [
     'K',
     {
-      backgroundColor: '#e3fbfb',
-      borderColor: '#a3fcfc',
-      backgroundColorHover: '#d1fcfc'
+      backgroundColor: '#ede9fe',
+      borderColor: '#c4b5fd',
+      backgroundColorHover: '#ddd6fe'
     }
-  ], // Ice Blue
+  ],
   [
     'L',
     {
-      backgroundColor: '#eebffb',
-      borderColor: '#a4efff',
-      backgroundColorHover: '#d6f7ff'
+      backgroundColor: '#fae8ff',
+      borderColor: '#f0abfc',
+      backgroundColorHover: '#f5d0fe'
     }
-  ], // Sky Blue
+  ],
   [
     'M',
     {
-      backgroundColor: '#ebf3ff',
-      borderColor: '#a4cbff',
-      backgroundColorHover: '#d6e7ff'
+      backgroundColor: '#fce7f3',
+      borderColor: '#f472b6',
+      backgroundColorHover: '#fbcfe8'
     }
-  ], // Soft Blue
+  ],
   [
     'N',
     {
-      backgroundColor: '#ebebff',
-      borderColor: '#a4a4ff',
-      backgroundColorHover: '#d6d6ff'
+      backgroundColor: '#ffe4e6',
+      borderColor: '#fda4af',
+      backgroundColorHover: '#fecdd3'
     }
-  ], // Periwinkle Blue
+  ],
   [
     'O',
     {
-      backgroundColor: '#f0ebff',
-      borderColor: '#bda4ff',
-      backgroundColorHover: '#e2d6ff'
+      backgroundColor: '#fff1f2',
+      borderColor: '#fecdd3',
+      backgroundColorHover: '#ffe4e6'
     }
-  ], // Lavender Blue
+  ],
   [
     'P',
     {
-      backgroundColor: '#f5ebff',
-      borderColor: '#d1a4ff',
-      backgroundColorHover: '#ebd6ff'
+      backgroundColor: '#fff7ed',
+      borderColor: '#ffedd5',
+      backgroundColorHover: '#fed7aa'
     }
-  ], // Soft Violet
+  ],
   [
     'Q',
     {
-      backgroundColor: '#ffebff',
-      borderColor: '#ffa4ff',
-      backgroundColorHover: '#ffd6ff'
+      backgroundColor: '#fffbebf',
+      borderColor: '#fde68a',
+      backgroundColorHover: '#fef3c7'
     }
-  ], // Pale Orchid
+  ],
   [
     'R',
     {
-      backgroundColor: '#ffebf5',
-      borderColor: '#ffa4d1',
-      backgroundColorHover: '#ffd6eb'
+      backgroundColor: '#f7fee7',
+      borderColor: '#d9f99d',
+      backgroundColorHover: '#ecfccb'
     }
-  ], // Light Magenta
+  ],
   [
     'S',
     {
-      backgroundColor: '#ffebf0',
-      borderColor: '#ffa4be',
-      backgroundColorHover: '#ffd6e0'
+      backgroundColor: '#f0fdf4',
+      borderColor: '#bbf7d0',
+      backgroundColorHover: '#dcfce7'
     }
-  ], // Rose Pink
+  ],
+  [
+    'T',
+    {
+      backgroundColor: '#ecfeff',
+      borderColor: '#a5f3fc',
+      backgroundColorHover: '#cffafe'
+    }
+  ],
+  [
+    'U',
+    {
+      backgroundColor: '#f0f9ff',
+      borderColor: '#bae6fd',
+      backgroundColorHover: '#e0f2fe'
+    }
+  ],
+  [
+    'V',
+    {
+      backgroundColor: '#f5f3ff',
+      borderColor: '#ddd6fe',
+      backgroundColorHover: '#ede9fe'
+    }
+  ],
+  [
+    'W',
+    {
+      backgroundColor: '#fdf4ff',
+      borderColor: '#f5d0fe',
+      backgroundColorHover: '#fae8ff'
+    }
+  ],
+  [
+    'X',
+    {
+      backgroundColor: '#fff1f5',
+      borderColor: '#fbcfe8',
+      backgroundColorHover: '#fce7f3'
+    }
+  ],
+  [
+    'Y',
+    {
+      backgroundColor: '#fff7f7',
+      borderColor: '#fecdd3',
+      backgroundColorHover: '#ffe4e6'
+    }
+  ],
   [
     'Z',
     {
-      backgroundColor: '#fff0f2',
-      borderColor: '#ffb3bf',
-      backgroundColorHover: '#ffe0e5'
+      backgroundColor: '#fef2f2',
+      borderColor: '#fca5a5',
+      backgroundColorHover: '#fecaca'
     }
-  ], // Soft Crimson
+  ],
   [
     'AA',
     {
-      backgroundColor: '#fff2ea',
-      borderColor: '#ffc299',
-      backgroundColorHover: '#ffe4d3'
+      backgroundColor: '#fff8f1',
+      borderColor: '#fdba74',
+      backgroundColorHover: '#ffedd5'
     }
-  ], // Peach
+  ],
   [
     'AB',
     {
-      backgroundColor: '#fff8ea',
-      borderColor: '#ffd899',
-      backgroundColorHover: '#ffeed3'
+      backgroundColor: '#fefce8',
+      borderColor: '#fde047',
+      backgroundColorHover: '#fef9c3'
     }
-  ], // Warm Cream
+  ],
   [
     'AC',
     {
-      backgroundColor: '#f7f9e8',
-      borderColor: '#dae697',
-      backgroundColorHover: '#eff2d3'
+      backgroundColor: '#f4fce3',
+      borderColor: '#bef264',
+      backgroundColorHover: '#ecfccb'
     }
-  ], // Sage Green Tint
+  ],
   [
     'AD',
     {
-      backgroundColor: '#eaf7ee',
-      borderColor: '#aee6bd',
-      backgroundColorHover: '#daf2e1'
+      backgroundColor: '#e6fcf5',
+      borderColor: '#6ee7b7',
+      backgroundColorHover: '#d1fae5'
     }
-  ], // Pale Emerald
+  ],
   [
     'AE',
     {
-      backgroundColor: '#eaf6f7',
-      borderColor: '#aedee6',
-      backgroundColorHover: '#daf0f2'
+      backgroundColor: '#e6faf8',
+      borderColor: '#5eead4',
+      backgroundColorHover: '#ccfbf1'
     }
-  ], // Soft Turquoise
+  ],
   [
     'AF',
     {
-      backgroundColor: '#edf0f9',
-      borderColor: '#bac7ec',
-      backgroundColorHover: '#e2e6f4'
+      backgroundColor: '#ebf8ff',
+      borderColor: '#7dd3fc',
+      backgroundColorHover: '#e0f2fe'
     }
-  ], // Slate Blue Tint
+  ],
   [
     'AG',
     {
-      backgroundColor: '#f6eff9',
-      borderColor: '#dec5ec',
-      backgroundColorHover: '#f0e4f4'
+      backgroundColor: '#f3e8ff',
+      borderColor: '#c4b5fd',
+      backgroundColorHover: '#ede9fe'
     }
-  ] // Soft Mauve
+  ]
 ]);
 
 function getCircleDisplayConfig(circleLetter: string): CircleDisplayConfig {
+  // return {
+  //   backgroundColor: '#fafafa',
+  //   borderColor: '#6e6e6e',
+  //   backgroundColorHover: '#818285'
+  // };
+
   return (
     displayConfig.get(circleLetter.toUpperCase()) ?? {
       backgroundColor: '#def7c9',

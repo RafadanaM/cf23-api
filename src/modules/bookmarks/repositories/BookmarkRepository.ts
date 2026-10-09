@@ -29,21 +29,23 @@ function createBookmarkRepository(db: ReturnType<typeof initDB>): BookmarkReposi
     }
   };
 
+  const upsertBookmarkById = (id: string, bookmarkData: UserBookmark): UserBookmark => {
+    try {
+      upsertStmt.run({
+        id,
+        data: JSON.stringify(bookmarkData)
+      });
+      return bookmarkData;
+    } catch (err) {
+      throw new RepositoryError('UPSERT_BOOKMARK_ERROR', {
+        cause: err
+      });
+    }
+  };
+
   return {
     getBookmarkById,
-    upsertBookmarkById: (id: string, bookmarkData: UserBookmark): UserBookmark => {
-      try {
-        upsertStmt.run({
-          id,
-          data: JSON.stringify(bookmarkData)
-        });
-        return bookmarkData;
-      } catch (err) {
-        throw new RepositoryError('UPSERT_BOOKMARK_ERROR', {
-          cause: err
-        });
-      }
-    }
+    upsertBookmarkById
   };
 }
 
