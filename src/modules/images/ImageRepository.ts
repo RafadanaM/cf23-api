@@ -2,7 +2,7 @@ import { S3Client } from 'bun';
 
 export interface ImageRepository {
   fileExist: (objectKey: string) => Promise<boolean>;
-  write: (objectKey: string, data: Response) => Promise<number>;
+  write: (objectKey: string, data: ArrayBuffer) => Promise<number>;
 }
 
 interface ImageRepositoryConfig {
@@ -26,7 +26,7 @@ function createImageRepository(config: ImageRepositoryConfig): ImageRepository {
     return file.exists();
   }
 
-  async function write(objectKey: string, data: Response): Promise<number> {
+  async function write(objectKey: string, data: ArrayBuffer): Promise<number> {
     const file = client.file(objectKey);
     return file.write(data);
   }

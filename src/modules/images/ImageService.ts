@@ -1,6 +1,7 @@
 import globalLogger from '@core/logger/logger';
 import createTaskQueue from '@modules/common/utils/TaskQueue';
 
+import type { Upload } from 'cloudflare/resources/workers/assets.mjs';
 import { generateUrl } from '@imgproxy/imgproxy-js-core';
 import type { ImageCacheRepository } from './ImageCacheRepository';
 import type { ImageRepository } from './ImageRepository';
@@ -48,6 +49,11 @@ function createImageService(
     scope: 'ImageService'
   });
 
+  const logMemory = (label: string) => {
+    const mb = (process.memoryUsage().rss / 1024 / 1024).toFixed(2);
+    logger.info(`[Memory] ${label}: ${mb} MB`);
+  };
+
   const keyBuffer = Buffer.from(config.key, 'hex');
   const saltBuffer = Buffer.from(config.salt, 'hex');
 
@@ -85,7 +91,9 @@ function createImageService(
       throw new Error(`${imageUrl} failed with HTTP status of ${response.status}`);
     }
 
-    await imageRepository.write(objectKey, response);
+    // Passing ArrayBuffer instead of raw response seems to fix the memory issue when most images need to be uploaded
+    const data = await response.arrayBuffer();
+    await imageRepository.write(objectKey, data);
     imageCacheRepository.set(objectKey);
 
     return {
@@ -100,11 +108,18 @@ function createImageService(
     logger.info(`Uploading images: ${imageUploads.length}`);
     const taskQueue = createTaskQueue({ concurrency: 15 });
 
-    const promises = imageUploads.map((imageUpload) => {
-      return taskQueue.enqueue(() => upload(imageUpload.url));
-    });
+    logMemory('Before Batch');
+    const promises: Promise<UploadValue>[] = [];
+
+    for (const imageUpload of imageUploads) {
+      await taskQueue.ready();
+
+      promises.push(taskQueue.enqueue(() => upload(imageUpload.url)));
+    }
 
     const results = await Promise.allSettled(promises);
+
+    logMemory('After Batch');
 
     let cachedCount = 0;
     let existsCount = 0;
