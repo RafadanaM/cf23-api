@@ -4,8 +4,8 @@ const BookmarkDetailSchema = t.Object({
   isComplete: t.Boolean(),
   id: t.String(),
   note: t.String({
-    maxLength: 350,
-    error: 'note cannot exceed 350 characters, check your bookmarked circle notes!'
+    maxLength: 250,
+    error: 'note cannot exceed 250 characters, check your bookmarked circle notes!'
   })
 });
 
