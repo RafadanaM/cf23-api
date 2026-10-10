@@ -19,6 +19,7 @@ interface ImageTransformationOptions {
   resizeType?: 'fit' | 'fill';
   width?: number;
   height?: number;
+  sharpness?: number;
 }
 
 interface Config {
@@ -157,6 +158,7 @@ function createImageService(
     const hasWidthOrHeight = options?.width || options?.height;
     const quality = options?.quality || 80;
     const resizing_type = options?.resizeType;
+    const sh = options?.sharpness;
 
     const path = generateUrl(
       {
@@ -174,6 +176,7 @@ function createImageService(
           : undefined,
         ext: 'webp',
         f: 'webp',
+        sh,
         g: {
           type: 'sm'
         }

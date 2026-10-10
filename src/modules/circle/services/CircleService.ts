@@ -50,9 +50,11 @@ function createCircleService(
     return {
       ...circle,
       imageUrl: imageService.getSignedUrl(data.url, {
-        height: 80,
-        width: 80,
-        resizeType: 'fit'
+        width: 160,
+        height: 160,
+        resizeType: 'fit',
+        quality: 80,
+        sharpness: 0.7
       }),
       sampleWorks: data.sampleWorks.map((sampleWork) => {
         return imageService.getSignedUrl(sampleWork, {
@@ -62,8 +64,8 @@ function createCircleService(
       sampleWorkThumbnails: data.sampleWorks.map((sampleWork) => {
         return imageService.getSignedUrl(sampleWork, {
           quality: 80,
-          width: 64,
-          height: 64,
+          width: 128,
+          height: 128,
           resizeType: 'fill'
         });
       })
