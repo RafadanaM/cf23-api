@@ -38,18 +38,23 @@ function createTaskQueue(config?: Config): TaskQueue {
   }
 
   function enqueue<T>(task: Task<T>): Promise<T> {
-    return new Promise<T>((resolve, reject) => {
-      queue.push(() => {
-        Promise.resolve()
-          .then(task)
-          .then(resolve, reject)
-          .finally(() => {
-            runningCount--;
-            next();
-          });
+    const promise = new Promise<T>((resolve, reject) => {
+      queue.push(async () => {
+        try {
+          resolve(await task());
+        } catch (error) {
+          reject(error);
+        } finally {
+          runningCount--;
+          next();
+        }
       });
       next();
     });
+
+    promise.catch(() => {});
+
+    return promise;
   }
 
   return {

@@ -1,7 +1,6 @@
 import globalLogger from '@core/logger/logger';
 import createTaskQueue from '@modules/common/utils/TaskQueue';
 
-import type { Upload } from 'cloudflare/resources/workers/assets.mjs';
 import { generateUrl } from '@imgproxy/imgproxy-js-core';
 import type { ImageCacheRepository } from './ImageCacheRepository';
 import type { ImageRepository } from './ImageRepository';
