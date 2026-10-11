@@ -67,19 +67,34 @@ function createApp({ appConfig, db }: CreateAppArgs) {
   const bookmarkController = createBookmarkController(appPlugin, bookmarkPlugin);
 
   logger.info('Updating circle data...');
-
-  function runRefresh(name: string) {
-    asyncLocalStorage.run({ jobId: `${name}-${crypto.randomUUID()}` }, () => {
-      void circleService.updateCircles();
+  async function runRefresh(name: string) {
+    return new Promise<void>((resolve) => {
+      asyncLocalStorage.run({ jobId: `${name}-${crypto.randomUUID()}` }, () => {
+        circleService
+          .updateCircles()
+          .catch(() => {})
+          .finally(() => resolve());
+      });
     });
   }
 
-  runRefresh('initial-catalog-refresh');
+  runRefresh('initial-catalog-refresh')
+    .then(() => {
+      void circleService.warmCache();
+    })
+    .catch(() => {
+      // noop
+    });
 
-  // scrape every 6 hours
+  // scrape every 1w
+  Bun.cron('0 0 * * 0', async () => {
+    logger.info('Running scheduled cache warm...');
+    void circleService.warmCache();
+  });
+
   Bun.cron('0 */6 * * *', async () => {
     logger.info('Running scheduled circle update...');
-    runRefresh('scheduled-catalog-refresh');
+    void runRefresh('scheduled-catalog-refresh');
   });
 
   const v1Routes = new Elysia({ prefix: '/v1' })
