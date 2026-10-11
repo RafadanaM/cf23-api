@@ -3,7 +3,6 @@ import globalLogger from '@core/logger/logger';
 
 import type { ImageService, UploadResult } from '@modules/images/ImageService';
 
-import createTaskQueue from '@modules/common/utils/TaskQueue';
 import type { CacheClient } from '../../../infrastructure/cloudflare/cloudflareClient';
 import type { CircleRepository } from '../repositories/CircleRepository';
 import type { Circle, NormalizedCircles } from '../types/Circle';
@@ -12,7 +11,6 @@ import hashCircleData from '../utils/hashCircleData';
 export interface CircleService {
   getCircles: () => Promise<{ version: string; circles: NormalizedCircles }>;
   updateCircles: () => Promise<void>;
-  warmCache: () => Promise<void>;
 }
 
 interface ImageToUpload {
@@ -140,47 +138,9 @@ function createCircleService(
     }
   }
 
-  async function warmCache(): Promise<void> {
-    const queue = createTaskQueue({
-      concurrency: 1,
-      maxQueuedTasks: 1
-    });
-
-    const data: NormalizedCircles = await circleRepository.getCircles().catch(() => ({
-      circles: [],
-      fandoms: [],
-      fillerCircles: []
-    }));
-
-    const flattenImages = data.circles.flatMap((circle) =>
-      [circle.imageUrl, ...circle.sampleWorks, ...circle.sampleWorkThumbnails].filter(
-        Boolean
-      )
-    ) as string[];
-    logger.info(`warming images cache, image count: ${flattenImages.length}`);
-
-    // warm image since server is in EU but users will be in Indonesia
-    for (const image of flattenImages) {
-      await queue.ready();
-      void queue.enqueue(() =>
-        fetch(image)
-          .then((res) => {
-            void res.body?.cancel();
-          })
-          .catch((err) => {
-            logger.error(err);
-            // noop
-          })
-      );
-      await Bun.sleep(250);
-    }
-    logger.info(`image cache warming complete`);
-  }
-
   return {
     getCircles,
-    updateCircles,
-    warmCache
+    updateCircles
   };
 }
 
