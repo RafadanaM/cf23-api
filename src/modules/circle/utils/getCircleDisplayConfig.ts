@@ -132,7 +132,7 @@ const displayConfig = new Map<string, CircleDisplayConfig>([
   [
     'Q',
     {
-      backgroundColor: '#fffbebf',
+      backgroundColor: '#fffbeb',
       borderColor: '#fde68a',
       backgroundColorHover: '#fef3c7'
     }
