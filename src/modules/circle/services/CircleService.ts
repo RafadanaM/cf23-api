@@ -91,6 +91,13 @@ function createCircleService(
       const scrapedCircles = await circleRepository.scrapeCircles();
       logger.info('Scrapping circles complete');
 
+      if (!scrapedCircles.circles.length) {
+        logger.warn(
+          `Scrapped Circles is empty! Inspect scrape result: ${JSON.stringify(scrapedCircles)}`
+        );
+        return;
+      }
+
       const existingCircles: NormalizedCircles = await circleRepository
         .getCircles()
         .catch(() => ({

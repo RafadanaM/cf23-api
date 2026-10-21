@@ -41,7 +41,7 @@ export type Circle = {
   rating: Rating;
   circleType: CircleType;
   rect: BoothRect;
-  displayConfig: CircleDisplayConfig;
+  displayConfig: CircleDisplayConfig | null;
   sampleWorks: string[];
   sampleWorkThumbnails: string[];
 };

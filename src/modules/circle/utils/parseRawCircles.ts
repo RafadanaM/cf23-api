@@ -126,7 +126,8 @@ function parseAllCircle(allCircles: RawCircle[]): NormalizedCircles {
       socialMedias: normalizeSocialMedia(rawCircle),
       workTypes: normalizeWorkTypes(rawCircle),
       rect: getBoothRect(code, circleType),
-      displayConfig: getCircleDisplayConfig(parseCircleCode(code, circleType).boothLetter)
+      displayConfig: null
+      // displayConfig: getCircleDisplayConfig(parseCircleCode(code, circleType).boothLetter)
     });
 
     fandoms.forEach((fandom) => {
