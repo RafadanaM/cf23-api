@@ -83,9 +83,9 @@ function createImageService(
       };
     }
 
-    const response = await fetch(imageUrl);
+    logger.info(`${objectKey} does not exists in cache, fetch image`);
 
-    logger.info(`${objectKey} does not exists in cache, uploading..`);
+    const response = await fetch(imageUrl);
     if (!response.ok) {
       logger.error(`${objectKey} failed to fetch`);
       throw new Error(`${imageUrl} failed with HTTP status of ${response.status}`);
@@ -93,7 +93,11 @@ function createImageService(
 
     // Passing ArrayBuffer instead of raw response seems to fix the memory issue when most images need to be uploaded
     const data = await response.arrayBuffer();
+    logger.info(`${objectKey} fetch success`);
+
+    logger.info(`${objectKey} upload start`);
     await imageRepository.write(objectKey, data);
+    logger.info(`${objectKey} upload success`);
     imageCacheRepository.set(objectKey);
 
     return {
@@ -106,7 +110,7 @@ function createImageService(
     imageUploads: T[]
   ): Promise<UploadResult<T>[]> {
     logger.info(`Uploading images: ${imageUploads.length}`);
-    const taskQueue = createTaskQueue({ concurrency: 15 });
+    const taskQueue = createTaskQueue({ concurrency: 10 });
 
     logMemory('Before Batch');
     const promises: Promise<UploadValue>[] = [];
