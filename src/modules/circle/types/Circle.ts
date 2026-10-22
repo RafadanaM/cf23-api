@@ -12,7 +12,7 @@ export type CircleType = DefaultCircleType | LargeCircleType;
 
 export type AttendingDay = 'SAT' | 'SUN';
 
-export type SocialMediaKind = 'FACEBOOK' | 'TWITTER' | 'INSTAGRAM' | 'OTHER';
+export type SocialMediaKind = 'FACEBOOK' | 'TWITTER' | 'INSTAGRAM' | 'YOUTUBE' | 'OTHER';
 
 export type SocialMediaDetail = {
   kind: SocialMediaKind;

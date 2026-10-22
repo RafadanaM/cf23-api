@@ -14,7 +14,6 @@ import type {
   SocialMediaDetail
 } from '../types/Circle';
 import { isDefaultCircle, isLargeCircle } from './circleType';
-import getCircleDisplayConfig from './getCircleDisplayConfig';
 
 type RawDay = 'Both Days' | 'SAT' | 'SUN';
 
@@ -34,20 +33,22 @@ type RawCircle = {
   SellsGame: boolean;
   SellsMusic: boolean;
   SellsGoods: boolean;
+  SellsHandmadeCrafts: boolean;
+  SellsMagazine: boolean;
+  SellsPhotobookCosplay: boolean;
+
   circle_facebook: string | null;
   circle_instagram: string | null;
   circle_twitter: string | null;
   circle_other_socials: string | null;
+  circle_youtube: string | null;
   marketplace_link: string | null;
   fandom: string;
   other_fandom: string;
   rating: Rating;
   sampleworks_images: string[] | null;
   day: RawDay;
-  SellsHandmadeCrafts: boolean;
-  SellsMagazine: boolean;
-  SellsPhotobookCosplay: boolean;
-  circle_type: RawCircleType;
+  Space: RawCircleType;
 };
 
 type RawState = {
@@ -68,6 +69,8 @@ const I_CHAR_CODE = 'I'.charCodeAt(0);
 const M_CHAR_CODE = 'M'.charCodeAt(0);
 const Q_CHAR_CODE = 'Q'.charCodeAt(0);
 const Y_CHAR_CODE = 'Y'.charCodeAt(0);
+const U_CHAR_CODE = 'U'.charCodeAt(0);
+const X_CHAR_CODE = 'X'.charCodeAt(0);
 
 function parseRawCircles(htmlString: string): NormalizedCircles {
   const parser = new DOMParser();
@@ -109,7 +112,7 @@ function parseAllCircle(allCircles: RawCircle[]): NormalizedCircles {
 
   allCircles.forEach((rawCircle) => {
     const code = normalizeCircleCode(rawCircle.circle_code);
-    const circleType = normalizeRawCircleType(rawCircle.circle_type);
+    const circleType = normalizeRawCircleType(rawCircle.Space);
     const fandoms = normalizeFandoms(rawCircle.fandom, rawCircle.other_fandom);
 
     normalizedCirles.push({
@@ -215,7 +218,7 @@ function calculateRect(parsedCircleCode: ParsedCircleCode): BoothRect {
     return calculateAABoothRect(parsedCircleCode);
   }
 
-  // Ab - Ag  Booths
+  // Ab - Ah  Booths
   if (
     parsedCircleCode.boothLetter.length === 2 &&
     isLargeParsedCircleCode(parsedCircleCode)
@@ -312,10 +315,21 @@ function calculateRestBoothRect({
   // gap from Q
   const fourthGapOffsetX = boothLetter.charCodeAt(0) > Q_CHAR_CODE ? 19 : 0;
 
+  // gap from V
+  const fifthGapOffsetX = boothLetter.charCodeAt(0) > U_CHAR_CODE ? 39 : 0;
+
+  // gap from X
+  const sixthGapOffsetX = boothLetter.charCodeAt(0) > X_CHAR_CODE ? 62 : 0;
+
   // TODO: HANDLE FROM T TO Y
 
   const gapOffsetX =
-    firstGapOffsetX + secondGapOffsetX + thirdGapOffsetX + fourthGapOffsetX;
+    firstGapOffsetX +
+    secondGapOffsetX +
+    thirdGapOffsetX +
+    fourthGapOffsetX +
+    fifthGapOffsetX +
+    sixthGapOffsetX;
 
   // ##### Y OFFSET #####
 
@@ -371,6 +385,8 @@ function calculateZBoothRect({
   const fifthOffsetXGap = boothStartNumber > 20 ? 65 : 0;
   const sixthOffsetXGap = boothStartNumber > 24 ? 50 : 0;
   const seventhOffsetXGap = boothStartNumber > 28 ? 505 : 0;
+  const eightOffsetXGap = boothStartNumber > 32 ? 94 : 0;
+  const ninthOffsetXGap = boothStartNumber > 36 ? 50 : 0;
 
   // TODO: handle Gap for 33-36, 37-40
 
@@ -386,7 +402,9 @@ function calculateZBoothRect({
       fourthOffsetXGap -
       fifthOffsetXGap -
       sixthOffsetXGap -
-      seventhOffsetXGap,
+      seventhOffsetXGap -
+      eightOffsetXGap -
+      ninthOffsetXGap,
     y: baseY,
     direction: 'HORIZONTAL',
     height: 40,
@@ -402,7 +420,7 @@ function calculateABoothRect({
   boothSubLetter
 }: ParsedDefaultCircleCode): BoothRect {
   const baseX = 4886;
-  const baseY = 3036;
+  const baseY = 3034;
 
   const boothNumberOffsetX = (boothStartNumber - 1) * 41;
   const boothSubLetterOffsetX =
@@ -419,8 +437,11 @@ function calculateABoothRect({
   const seventhOffsetXGap = boothStartNumber > 28 ? 378 : 0;
   const eightOffsetXGap = boothStartNumber > 32 ? 26 : 0;
   const ninthOffsetXGap = boothStartNumber > 36 ? 54 : 0;
-
-  // TODO: ADD GAP FOR: 41-44, 45-48, 49-52, 53-56, 57-60
+  const tenthOffsetXGap = boothStartNumber > 40 ? 26 : 0;
+  const eleventOffsetXGap = boothStartNumber > 44 ? 378 : 0;
+  const twelfthOffsetXGap = boothStartNumber > 48 ? 26 : 0;
+  const thirteenthOffsetXGap = boothStartNumber > 52 ? 54 : 0;
+  const fourtheenthOffsetXGap = boothStartNumber > 56 ? 26 : 0;
 
   const widthOffset = boothSize === 4 ? 4 : 0;
 
@@ -438,7 +459,12 @@ function calculateABoothRect({
       sixthOffsetXGap -
       seventhOffsetXGap -
       eightOffsetXGap -
-      ninthOffsetXGap,
+      ninthOffsetXGap -
+      tenthOffsetXGap -
+      eleventOffsetXGap -
+      twelfthOffsetXGap -
+      thirteenthOffsetXGap -
+      fourtheenthOffsetXGap,
     y: baseY,
     direction: 'HORIZONTAL',
     height: 40,
@@ -486,7 +512,7 @@ function calculateAxBoothRect(parsedCircleCode: ParsedLargeCircleCode): BoothRec
   // gap until AG
   const boothLetterThirdOffsetX = boothLetter === 'AG' ? 150 : 0;
 
-  // TODO: handle gap until AH
+  const boothLetterFourthOffsetX = boothLetter === 'AH' ? 343 : 0;
 
   // ############## Y OFFSET #################
   const columnIndex = isUpwards
@@ -528,7 +554,8 @@ function calculateAxBoothRect(parsedCircleCode: ParsedLargeCircleCode): BoothRec
       sizeOffsetX -
       boothLetterFirstOffsetX -
       boothLetterSecondOffsetX -
-      boothLetterThirdOffsetX,
+      boothLetterThirdOffsetX -
+      boothLetterFourthOffsetX,
     y:
       baseY -
       numberOffsetY -
@@ -637,6 +664,13 @@ function normalizeSocialMedia(rawCircle: RawCircle): SocialMediaDetail[] {
     socialMediaDetails.push({
       kind: 'TWITTER',
       url: normalizeExternalUrl(rawCircle.circle_twitter)
+    });
+  }
+
+  if (rawCircle.circle_youtube) {
+    socialMediaDetails.push({
+      kind: 'YOUTUBE',
+      url: normalizeExternalUrl(rawCircle.circle_youtube)
     });
   }
 
